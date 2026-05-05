@@ -77,31 +77,41 @@ def get_photo_b64(image_prompt):
             time.sleep(10)
     return None
 
-def get_article(topic, keyword, target_url):
-    """Написание статьи через Gemini"""
-    print(f"✍️ Пишу статью для Дзена: '{topic}'...")
+def get_article(topic, keywords_list, all_urls):
+    """Написание статьи через Gemini с вплетением всех ключей и ссылок"""
+    print(f"✍️ Пишу SEO-статью: '{topic}'...")
+    
+    urls_str = "\n".join(all_urls)
 
     prompt = f"""Пиши экспертную статью для Яндекс.Дзена от лица компании «Индоступ» (Санкт-Петербург).
-ТЕМА: '{topic}' | КЛЮЧ: '{keyword}'
-Упомяни 1 раз ссылку на наш сайт: <a href="{target_url}">[естественный анкорный текст]</a>.
+ТЕМА: '{topic}'
 
-ТРЕБОВАНИЯ:
-1. СТИЛЬ: Живой, интересный, для людей. Используй подзаголовки, списки.
-2. СТРУКТУРА: H1 -> Вступление -> Разделы H2 -> Список советов -> Заключение.
-3. ОФОРМЛЕНИЕ: Только HTML (h2, p, ul, li, strong).
+ТВОЯ ГЛАВНАЯ ЗАДАЧА:
+В тексте статьи ТЫ ДОЛЖЕН использовать ВСЕ следующие ключевые фразы. 
+Для КАЖДОЙ фразы выбери из списка ниже наиболее подходящую по смыслу ссылку и оформи фразу как <a href="ссылка">ключевая фраза</a>.
+
+СПИСОК КЛЮЧЕВЫХ ФРАЗ:
+{keywords_list}
+
+СПИСОК ДОСТУПНЫХ URL (выбирай наиболее релевантный для каждого ключа):
+{urls_str}
+
+ТРЕБОВАНИЯ К ТЕКСТУ:
+1. СТИЛЬ: Профессиональный экспертный блог, полезно для бизнеса и госзаказчиков.
+2. СТРУКТУРА: H1 -> Интересное вступление -> Разделы H2 -> Списки/советы -> Заключение.
+3. ОФОРМЛЕНИЕ: Только HTML (h2, p, ul, li, strong, a).
 4. КАРТИНКА: Вставь маркер #IMG_1# в середине.
+5. ССЫЛКИ: Каждый ключ из списка выше ДОЛЖЕН стать ссылкой. Ссылки должны выглядеть естественно в тексте.
 
 Верни СТРОГО JSON:
 {{
   "title": "Заголовок для Дзена",
-  "description": "Краткий анонс для RSS",
-  "content": "HTML-код статьи",
+  "description": "SEO анонс",
+  "content": "HTML-код статьи со всеми ссылками",
   "slug": "translit-slug",
   "image_prompts": {{
-    "main": "English prompt for main cover photo, realistic, 16:9",
-    "main_alt": "Alt текст для главной",
-    "inner": "English prompt for in-text photo, construction details",
-    "inner_alt": "Alt текст для внутренней"
+    "main": "English prompt for cover photo",
+    "inner": "English prompt for inner photo"
   }}
 }}"""
 
@@ -158,18 +168,29 @@ def update_rss(article_data):
     
     print(f"✅ Статья добавлена в RSS: {rss_path}")
 
+def get_all_urls():
+    """Читаем все ссылки из urls.txt"""
+    urls_path = os.path.join(BASE_DIR, "urls.txt")
+    try:
+        with open(urls_path, "r", encoding="utf-8") as f:
+            return [line.strip() for line in f if line.strip()]
+    except:
+        return ["https://indostup.ru/catalog/"]
+
 def main():
     db_path = os.path.join(BASE_DIR, "content_plan.db")
+    all_urls = get_all_urls()
+    
     with sqlite3.connect(db_path) as conn:
         cur = conn.cursor()
-        cur.execute("SELECT id, topic, keyword, target_url FROM articles WHERE status='new' LIMIT 1")
+        cur.execute("SELECT id, topic, keyword FROM articles WHERE status='new' LIMIT 1")
         row = cur.fetchone()
         if not row:
-            print("✅ Все темы опубликованы.")
+            print("✅ Все темы из плана опубликованы. Запустите planner.py для новых тем.")
             return
 
-        article_id, topic, keyword, target_url = row
-        data = get_article(topic, keyword, target_url)
+        article_id, topic, keywords_list = row
+        data = get_article(topic, keywords_list, all_urls)
         if not data: return
 
         # Генерация и сохранение картинок
