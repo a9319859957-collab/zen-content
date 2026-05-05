@@ -12,6 +12,8 @@ GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 SITE_URL = os.getenv("GITHUB_PAGES_URL", "https://your-link.github.io")
 
 CURRENT_YEAR = datetime.now().year
+_MONTHS_RU = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']
+TODAY_RU = f"{datetime.now().day} {_MONTHS_RU[datetime.now().month-1]} {datetime.now().year} года"
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")
 MEDIA_DIR = os.path.join(OUTPUT_DIR, "media")
 
@@ -83,8 +85,8 @@ def get_article(topic, keywords_list, all_urls):
     
     urls_str = "\n".join(all_urls)
 
-    prompt = f"""Сегодня 5 мая 2026 года. Пиши экспертную статью для Яндекс.Дзена от лица компании «Индоступ» (Санкт-Петербург). 
-Все события, нормы и советы должны быть актуальны на май 2026 года.
+    prompt = f"""Сегодня {TODAY_RU}. Пиши экспертную статью для Яндекс.Дзена от лица компании «Индоступ» (Санкт-Петербург).
+Все события, нормы и советы должны быть актуальны на {TODAY_RU}.
 ТЕМА: '{topic}'
 
 ТВОЯ ЗАДАЧА:
@@ -136,7 +138,7 @@ def update_rss(article_data):
     item = f"""
     <item>
         <title>{article_data['title']}</title>
-        <link>{SITE_URL}/output/media/{article_data['main_img']}</link>
+        <link>{SITE_URL}/{article_data['slug']}</link>
         <guid>{article_data['slug']}</guid>
         <pubDate>{now}</pubDate>
         <description><![CDATA[{article_data['description']}]]></description>

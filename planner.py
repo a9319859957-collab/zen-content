@@ -1,4 +1,5 @@
-import sqlite3, os, json, requests, random, time, re, csv
+import sqlite3, os, json, requests, random, csv
+from datetime import datetime
 from dotenv import load_dotenv
 
 # Динамический путь для Mac
@@ -8,6 +9,9 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 PROXY_URL = os.getenv("CLOUDFLARE_WORKER_URL")
 PROXY_TOKEN = os.getenv("CLOUDFLARE_PROXY_TOKEN")
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
+
+_MONTHS_RU = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря']
+TODAY_RU = f"{datetime.now().day} {_MONTHS_RU[datetime.now().month-1]} {datetime.now().year} года"
 
 
 def get_urls():
@@ -45,13 +49,15 @@ def generate_plan(urls, keyword_groups):
     # Выбираем случайные 15 групп ключей для плана
     sample_groups = random.sample(keyword_groups, min(15, len(keyword_groups)))
     
-    # Формируем список ключей для промпта
+    # Формируем список ключей и URL для промпта
     keywords_str = "\n".join([", ".join(group) for group in sample_groups])
+    urls_str = "\n".join(urls[:15])
 
     prompt = (
-        f'Сегодня 5 мая 2026 года. Ты ведущий SEO-стратег компании "ИнДоступ". '
-        f'У тебя есть группы ключевых слов. Для каждой группы придумай тему экспертной статьи для Дзена, актуальную на МАЙ 2026 года.\n\n'
+        f'Сегодня {TODAY_RU}. Ты ведущий SEO-стратег компании "ИнДоступ". '
+        f'У тебя есть группы ключевых слов. Для каждой группы придумай тему экспертной статьи для Дзена, актуальную на {TODAY_RU}.\n\n'
         f'ГРУППЫ КЛЮЧЕЙ:\n{keywords_str}\n\n'
+        f'СТРАНИЦЫ САЙТА (учитывай при выборе тем, чтобы статьи органично ссылались на них):\n{urls_str}\n\n'
         f'ЗАДАЧА: Верни JSON-массив объектов. \n'
         f'ВАЖНО: В поле "keywords" ТЫ ДОЛЖЕН перечислить ВСЕ ключевые фразы из соответствующей группы без исключений.\n'
         f'ФОРМАТ: [{{"topic": "заголовок статьи", "keywords": "фраза1, фраза2, фраза3, ..."}}]'
@@ -89,16 +95,16 @@ def main():
     db_path = os.path.join(BASE_DIR, "content_plan.db")
     with sqlite3.connect(db_path) as conn:
         cur = conn.cursor()
-        cur.execute("DROP TABLE IF EXISTS articles") # Сбросим старый план
         cur.execute("""
-            CREATE TABLE articles (
+            CREATE TABLE IF NOT EXISTS articles (
                 id INTEGER PRIMARY KEY,
                 topic TEXT,
-                keyword TEXT, -- Здесь будут храниться все ключи через запятую
+                keyword TEXT,
                 status TEXT,
                 target_url TEXT
             )
         """)
+        cur.execute("DELETE FROM articles WHERE status='new'")
         
         for item in plan:
             cur.execute(

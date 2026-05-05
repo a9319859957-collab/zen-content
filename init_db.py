@@ -19,13 +19,10 @@ def init_db():
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS articles (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            topic TEXT NOT NULL,
-            target_audience TEXT NOT NULL,
-            status TEXT DEFAULT 'new',
-            published_url TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            id INTEGER PRIMARY KEY,
+            topic TEXT,
             keyword TEXT,
+            status TEXT DEFAULT 'new',
             target_url TEXT
         )
     ''')
@@ -40,7 +37,7 @@ def generate_content_plan(conn):
     Составь контент-план из 12 экспертных тем. Темы должны касаться ГОСТов, СНиПов (СП 59.13330.2020), проверок, закрытия раздела МГН, зон безопасности и санузлов.
     Верни СТРОГО валидный JSON в формате:
     [
-      {"topic": "Название темы", "target_audience": "Кто читает"}
+      {"topic": "Название темы", "keywords": "ключ1, ключ2, ключ3"}
     ]
     Никакого текста кроме JSON.
     """
@@ -61,8 +58,8 @@ def generate_content_plan(conn):
         
         cursor = conn.cursor()
         for item in topics:
-            cursor.execute("INSERT INTO articles (topic, target_audience, status) VALUES (?, ?, 'new')", 
-                           (item['topic'], item['target_audience']))
+            cursor.execute("INSERT INTO articles (topic, keyword, status, target_url) VALUES (?, ?, 'new', ?)",
+                           (item['topic'], item.get('keywords', ''), "https://indostup.ru/catalog/"))
         conn.commit()
         print(f"✅ Успешно добавлено {len(topics)} тем в базу!")
     except Exception as e:
