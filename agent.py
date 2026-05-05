@@ -1,4 +1,4 @@
-import sqlite3, os, json, requests, time, urllib.parse, random, re, base64
+import sqlite3, os, json, requests, time, urllib.parse, random, re, base64, subprocess
 from dotenv import load_dotenv
 from datetime import datetime
 
@@ -9,6 +9,7 @@ load_dotenv(os.path.join(BASE_DIR, ".env"))
 PROXY_URL = os.getenv("CLOUDFLARE_WORKER_URL")
 PROXY_TOKEN = os.getenv("CLOUDFLARE_PROXY_TOKEN")
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
+SITE_URL = os.getenv("GITHUB_PAGES_URL", "https://your-link.github.io")
 
 CURRENT_YEAR = datetime.now().year
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")
@@ -16,6 +17,21 @@ MEDIA_DIR = os.path.join(OUTPUT_DIR, "media")
 
 # Создаем папки если нет
 os.makedirs(MEDIA_DIR, exist_ok=True)
+
+def git_push():
+    """Автоматическая отправка изменений на GitHub"""
+    try:
+        print("📤 Отправляю изменения на GitHub...")
+        subprocess.run(["git", "add", "."], check=True)
+        subprocess.run(["git", "commit", "-m", f"Auto-publish: {datetime.now().strftime('%Y-%m-%d %H:%M')}"], check=True)
+        # Если вы уже настроили remote origin, эта команда сработает
+        result = subprocess.run(["git", "push"], capture_output=True, text=True)
+        if result.returncode == 0:
+            print("🚀 Успешно загружено на GitHub!")
+        else:
+            print(f"⚠️ Ошибка push (возможно, не настроен remote): {result.stderr}")
+    except Exception as e:
+        print(f"❌ Ошибка Git: {e}")
 
 def save_image(b64_data, filename):
     """Сохранение base64 в файл"""
@@ -104,39 +120,30 @@ def get_article(topic, keyword, target_url):
     return None
 
 def update_rss(article_data):
-    """Добавление статьи в локальный RSS-файл (упрощенная версия)"""
+    """Добавление статьи в локальный RSS-файл"""
     rss_path = os.path.join(OUTPUT_DIR, "rss.xml")
     now = datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0300")
-    
-    # Ссылка на ваш сайт для RSS (замените на реальный домен, где будут лежать картинки)
-    SITE_URL = "https://indostup.ru" 
     
     item = f"""
     <item>
         <title>{article_data['title']}</title>
-        <link>{SITE_URL}/blog/{article_data['slug']}</link>
-        <pdalink>{SITE_URL}/blog/{article_data['slug']}</pdalink>
+        <link>{SITE_URL}/output/media/{article_data['main_img']}</link>
         <guid>{article_data['slug']}</guid>
         <pubDate>{now}</pubDate>
         <description><![CDATA[{article_data['description']}]]></description>
         <content:encoded><![CDATA[
-            {article_data['content'].replace('#IMG_1#', f'<img src="{SITE_URL}/media/{article_data["inner_img"]}"/>')}
+            {article_data['content'].replace('#IMG_1#', f'<img src="{SITE_URL}/output/media/{article_data["inner_img"]}"/>')}
         ]]></content:encoded>
-        <enclosure url="{SITE_URL}/media/{article_data['main_img']}" type="image/jpeg"/>
+        <enclosure url="{SITE_URL}/output/media/{article_data['main_img']}" type="image/jpeg"/>
     </item>"""
     
-    # Если файла нет, создаем заголовок
     if not os.path.exists(rss_path):
         header = f"""<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" 
-     xmlns:dc="http://purl.org/dc/elements/1.1/" 
-     xmlns:media="http://search.yahoo.com/mrss/" 
-     version="2.0">
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
   <channel>
     <title>Индоступ - Доступная среда</title>
     <link>{SITE_URL}</link>
     <description>Блог экспертов по адаптации зданий для МГН</description>
-    <language>ru</language>
     <!-- ITEMS_HERE -->
   </channel>
 </rss>"""
@@ -184,6 +191,9 @@ def main():
         
         cur.execute("UPDATE articles SET status='published' WHERE id=?", (article_id,))
         conn.commit()
+
+        # Автоматическая отправка на GitHub
+        git_push()
 
 if __name__ == "__main__":
     main()

@@ -46,7 +46,7 @@ def generate_plan(urls):
         f'[{{"topic": "тема статьи", "keyword": "ключевое слово", "target_url": "https://indostup.ru/catalog/..."}}]'
     )
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash:generateContent?key={GEMINI_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key={GEMINI_KEY}"
     headers = {
         "X-Proxy-Token": PROXY_TOKEN,
         "X-Target-URL": url,
