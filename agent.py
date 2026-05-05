@@ -35,6 +35,47 @@ def git_push():
     except Exception as e:
         print(f"❌ Ошибка Git: {e}")
 
+HTML_TEMPLATE = """<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{title}</title>
+<meta name="description" content="{description}">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{description}">
+<meta property="og:image" content="{main_img_url}">
+<meta property="og:type" content="article">
+<style>body{{max-width:800px;margin:0 auto;padding:20px;font-family:sans-serif;line-height:1.6}}img{{max-width:100%}}</style>
+</head>
+<body>
+<article>
+{content}
+</article>
+</body>
+</html>"""
+
+def save_article_html(data):
+    """Сохранение HTML-страницы статьи для GitHub Pages"""
+    slug = data['slug']
+    html_path = os.path.join(OUTPUT_DIR, f"{slug}.html")
+    main_img_url = f"{SITE_URL}/output/media/{data['main_img']}"
+    inner_img_url = f"{SITE_URL}/output/media/{data['inner_img']}"
+    title = data['title']
+    content_with_img = data['content'].replace(
+        '#IMG_1#', f'<img src="{inner_img_url}" alt="{title}">'
+    )
+    html = HTML_TEMPLATE.format(
+        title=data['title'],
+        description=data['description'],
+        main_img_url=main_img_url,
+        content=content_with_img,
+    )
+    with open(html_path, "w", encoding="utf-8") as f:
+        f.write(html)
+    print(f"📄 HTML-страница сохранена: output/{slug}.html")
+    return f"{SITE_URL}/output/{slug}.html"
+
 def save_image(b64_data, filename):
     """Сохранение base64 в файл"""
     if not b64_data:
@@ -134,27 +175,32 @@ def update_rss(article_data):
     """Добавление статьи в локальный RSS-файл"""
     rss_path = os.path.join(OUTPUT_DIR, "rss.xml")
     now = datetime.now().strftime("%a, %d %b %Y %H:%M:%S +0300")
-    
+    slug = article_data['slug']
+    article_url = f"{SITE_URL}/output/{slug}.html"
+    inner_img_url = f"{SITE_URL}/output/media/{article_data['inner_img']}"
+    content_html = article_data['content'].replace('#IMG_1#', f'<img src="{inner_img_url}"/>')
+
     item = f"""
     <item>
         <title>{article_data['title']}</title>
-        <link>{SITE_URL}/{article_data['slug']}</link>
-        <guid>{article_data['slug']}</guid>
+        <link>{article_url}</link>
+        <guid isPermaLink="true">{article_url}</guid>
         <pubDate>{now}</pubDate>
         <description><![CDATA[{article_data['description']}]]></description>
-        <content:encoded><![CDATA[
-            {article_data['content'].replace('#IMG_1#', f'<img src="{SITE_URL}/output/media/{article_data["inner_img"]}"/>')}
-        ]]></content:encoded>
-        <enclosure url="{SITE_URL}/output/media/{article_data['main_img']}" type="image/jpeg"/>
+        <content:encoded><![CDATA[{content_html}]]></content:encoded>
+        <enclosure url="{SITE_URL}/output/media/{article_data['main_img']}" type="image/jpeg" length="0"/>
     </item>"""
-    
+
+    rss_url = f"{SITE_URL}/output/rss.xml"
     if not os.path.exists(rss_path):
         header = f"""<?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Индоступ - Доступная среда</title>
     <link>{SITE_URL}</link>
+    <atom:link href="{rss_url}" rel="self" type="application/rss+xml"/>
     <description>Блог экспертов по адаптации зданий для МГН</description>
+    <language>ru</language>
     <!-- ITEMS_HERE -->
   </channel>
 </rss>"""
@@ -166,7 +212,8 @@ def update_rss(article_data):
         new_content = content.replace("<!-- ITEMS_HERE -->", item + "\n    <!-- ITEMS_HERE -->")
         f.seek(0)
         f.write(new_content)
-    
+        f.truncate()
+
     print(f"✅ Статья добавлена в RSS: {rss_path}")
 
 def get_all_urls():
@@ -205,10 +252,11 @@ def main():
         inner_img_name = f"{data['slug']}_inner.jpg"
         save_image(inner_b64, inner_img_name)
 
-        # Публикация в RSS
+        # Генерация HTML-страницы и публикация в RSS
         data['main_img'] = main_img_name
         data['inner_img'] = inner_img_name
-        
+
+        save_article_html(data)
         update_rss(data)
         
         cur.execute("UPDATE articles SET status='published' WHERE id=?", (article_id,))

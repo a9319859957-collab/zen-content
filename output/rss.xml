@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
+<rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
     <title>Индоступ - Доступная среда</title>
     <link>https://a9319859957-collab.github.io/zen-content</link>
+    <atom:link href="https://a9319859957-collab.github.io/zen-content/output/rss.xml" rel="self" type="application/rss+xml"/>
     <description>Блог экспертов по адаптации зданий для МГН</description>
+    <language>ru</language>
     
     <item>
         <title>Как пройти проверку ГАСН: основные требования к доступной среде в новостройках</title>
-        <link>https://a9319859957-collab.github.io/zen-content/output/media/kak-proyti-proverku-gasn-osnovnye-trebovaniya-k-dostupnoy-srede_main.jpg</link>
-        <guid>kak-proyti-proverku-gasn-osnovnye-trebovaniya-k-dostupnoy-srede</guid>
+        <link>https://a9319859957-collab.github.io/zen-content/output/kak-proyti-proverku-gasn-osnovnye-trebovaniya-k-dostupnoy-srede.html</link>
+        <guid isPermaLink="true">https://a9319859957-collab.github.io/zen-content/output/kak-proyti-proverku-gasn-osnovnye-trebovaniya-k-dostupnoy-srede.html</guid>
         <pubDate>Tue, 05 May 2026 13:11:23 +0300</pubDate>
         <description><![CDATA[Эксперты петербургской компании «Индоступ» рассказывают, на что обращает внимание инспектор при приемке новостройки и как застройщику избежать штрафов за нарушения норм доступной среды.]]></description>
         <content:encoded><![CDATA[
@@ -19,8 +21,8 @@
     
     <item>
         <title>Проектирование пандусов в СПб по СП 59.13330: расчет уклона и выбор материалов</title>
-        <link>https://a9319859957-collab.github.io/zen-content/output/media/proektirovanie-pandusov-v-spb-po-sp-5913330_main.jpg</link>
-        <guid>proektirovanie-pandusov-v-spb-po-sp-5913330</guid>
+        <link>https://a9319859957-collab.github.io/zen-content/output/proektirovanie-pandusov-v-spb-po-sp-5913330.html</link>
+        <guid isPermaLink="true">https://a9319859957-collab.github.io/zen-content/output/proektirovanie-pandusov-v-spb-po-sp-5913330.html</guid>
         <pubDate>Tue, 05 May 2026 14:04:50 +0300</pubDate>
         <description><![CDATA[Экспертный разбор от компании «Индоступ» (Санкт-Петербург). Узнайте, как правильно рассчитать уклон пандуса по СП 59.13330, выбрать нескользящие материалы для нашего климата и избежать ошибок при создании доступной среды.]]></description>
         <content:encoded><![CDATA[
@@ -31,8 +33,8 @@
     
     <item>
         <title>Тактильная плитка из ПВХ и полиуретана: в чем разница и что выбрать для госучреждений</title>
-        <link>https://a9319859957-collab.github.io/zen-content/output/media/taktilnaya-plitka-pvh-i-poliuretan-chto-vybrat-gosuchrezhdeniyam_main.jpg</link>
-        <guid>taktilnaya-plitka-pvh-i-poliuretan-chto-vybrat-gosuchrezhdeniyam</guid>
+        <link>https://a9319859957-collab.github.io/zen-content/output/taktilnaya-plitka-pvh-i-poliuretan-chto-vybrat-gosuchrezhdeniyam.html</link>
+        <guid isPermaLink="true">https://a9319859957-collab.github.io/zen-content/output/taktilnaya-plitka-pvh-i-poliuretan-chto-vybrat-gosuchrezhdeniyam.html</guid>
         <pubDate>Tue, 05 May 2026 15:49:23 +0300</pubDate>
         <description><![CDATA[Экспертный разбор от компании «Индоступ» (Санкт-Петербург): сравниваем тактильную плитку из ПВХ и полиуретана. Узнайте, какой материал лучше подходит для адаптации госучреждений по программе «Доступная среда».]]></description>
         <content:encoded><![CDATA[
@@ -43,8 +45,8 @@
     
     <item>
         <title>Доступная среда в Екатеринбурге: обзор официального сайта и услуг компании «ИнДоступ»</title>
-        <link>https://a9319859957-collab.github.io/zen-content/output/media/dostupnaya-sreda-v-ekaterinburge-obzor-sayta-indostup_main.jpg</link>
-        <guid>dostupnaya-sreda-v-ekaterinburge-obzor-sayta-indostup</guid>
+        <link>https://a9319859957-collab.github.io/zen-content/output/dostupnaya-sreda-v-ekaterinburge-obzor-sayta-indostup.html</link>
+        <guid isPermaLink="true">https://a9319859957-collab.github.io/zen-content/output/dostupnaya-sreda-v-ekaterinburge-obzor-sayta-indostup.html</guid>
         <pubDate>Tue, 05 May 2026 15:50:57 +0300</pubDate>
         <description><![CDATA[Узнайте, как организовать безбарьерное пространство в Екатеринбурге. Обзор каталога, услуг и оборудования от экспертов компании «Индоступ» для бизнеса и госучреждений.]]></description>
         <content:encoded><![CDATA[
@@ -82,8 +84,8 @@
     
     <item>
         <title>Нормы проектирования 2024: как сделать объект доступным и избежать штрафов</title>
-        <link>https://a9319859957-collab.github.io/zen-content/output/media/normy-proektirovaniya-2024-kak-sdelat-obyekt-dostupnym_main.jpg</link>
-        <guid>normy-proektirovaniya-2024-kak-sdelat-obyekt-dostupnym</guid>
+        <link>https://a9319859957-collab.github.io/zen-content/output/normy-proektirovaniya-2024-kak-sdelat-obyekt-dostupnym.html</link>
+        <guid isPermaLink="true">https://a9319859957-collab.github.io/zen-content/output/normy-proektirovaniya-2024-kak-sdelat-obyekt-dostupnym.html</guid>
         <pubDate>Tue, 05 May 2026 15:56:56 +0300</pubDate>
         <description><![CDATA[Экспертный разбор от компании «Индоступ» (СПб). Узнайте, как правильно адаптировать здание для маломобильных групп населения, соблюсти актуальные нормы доступной среды и избежать штрафов в 2024 году.]]></description>
         <content:encoded><![CDATA[
@@ -122,8 +124,8 @@
     
     <item>
         <title>Тренды безбарьерной среды в Санкт-Петербурге: чек-лист для бизнеса на летний сезон 2026</title>
-        <link>https://a9319859957-collab.github.io/zen-content/output/media/trendy-bezbariernoy-sredy-v-spb-chek-list-2026_main.jpg</link>
-        <guid>trendy-bezbariernoy-sredy-v-spb-chek-list-2026</guid>
+        <link>https://a9319859957-collab.github.io/zen-content/output/trendy-bezbariernoy-sredy-v-spb-chek-list-2026.html</link>
+        <guid isPermaLink="true">https://a9319859957-collab.github.io/zen-content/output/trendy-bezbariernoy-sredy-v-spb-chek-list-2026.html</guid>
         <pubDate>Tue, 05 May 2026 15:57:04 +0300</pubDate>
         <description><![CDATA[Эксперты компании «Индоступ» рассказывают, как бизнесу в Санкт-Петербурге подготовить инфраструктуру к летнему туристическому сезону 2026 года. Актуальные требования, тренды и чек-лист по созданию доступной среды.]]></description>
         <content:encoded><![CDATA[
@@ -176,8 +178,8 @@
     
     <item>
         <title>Профстандарты 2026: почему обучение по доступной среде стало обязательным для руководителей</title>
-        <link>https://a9319859957-collab.github.io/zen-content/profstandarty-2026-obuchenie-po-dostupnoy-srede-dlya-rukovoditeley</link>
-        <guid>profstandarty-2026-obuchenie-po-dostupnoy-srede-dlya-rukovoditeley</guid>
+        <link>https://a9319859957-collab.github.io/zen-content/output/profstandarty-2026-obuchenie-po-dostupnoy-srede-dlya-rukovoditeley.html</link>
+        <guid isPermaLink="true">https://a9319859957-collab.github.io/zen-content/output/profstandarty-2026-obuchenie-po-dostupnoy-srede-dlya-rukovoditeley.html</guid>
         <pubDate>Tue, 05 May 2026 16:06:41 +0300</pubDate>
         <description><![CDATA[С 2026 года требования к инклюзии в РФ ужесточились. Эксперты компании «Индоступ» (Санкт-Петербург) рассказывают, кому обязательно проходить обучение по доступной среде, как избежать новых штрафов и правильно адаптировать объект.]]></description>
         <content:encoded><![CDATA[
